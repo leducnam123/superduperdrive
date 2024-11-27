@@ -44,7 +44,7 @@ class NoteTests {
      * PLEASE DO NOT DELETE THIS method.
      * Helper method for Udacity-supplied sanity checks.
      **/
-    private void doMockSignUp(String firstName, String lastName, String userName, String password){
+    private void doMockSignUp(String firstName, String lastName, String username, String password){
         // Create a dummy account for logging in later.
 
         // Visit the sign-up page.
@@ -66,7 +66,7 @@ class NoteTests {
         webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("inputUsername")));
         WebElement inputUsername = driver.findElement(By.id("inputUsername"));
         inputUsername.click();
-        inputUsername.sendKeys(userName);
+        inputUsername.sendKeys(username);
 
         webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("inputPassword")));
         WebElement inputPassword = driver.findElement(By.id("inputPassword"));
@@ -86,13 +86,11 @@ class NoteTests {
 
     }
 
-
-
     /**
      * PLEASE DO NOT DELETE THIS method.
      * Helper method for Udacity-supplied sanity checks.
      **/
-    private void doLogIn(String userName, String password)
+    private void doLogIn(String username, String password)
     {
         // Log in to our dummy account.
         driver.get("http://localhost:" + this.port + "/login");
@@ -101,7 +99,7 @@ class NoteTests {
         webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("inputUsername")));
         WebElement loginUserName = driver.findElement(By.id("inputUsername"));
         loginUserName.click();
-        loginUserName.sendKeys(userName);
+        loginUserName.sendKeys(username);
 
         webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("inputPassword")));
         WebElement loginPassword = driver.findElement(By.id("inputPassword"));
@@ -118,8 +116,8 @@ class NoteTests {
     private void createNote (String title, String description) {
         WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
         webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nav-notes-tab")));
-        WebElement tabnote = driver.findElement(By.id("nav-notes-tab"));
-        tabnote.click();
+        WebElement tabNote = driver.findElement(By.id("nav-notes-tab"));
+        tabNote.click();
 
         webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-creation-btn")));
         WebElement openModal = driver.findElement(By.id("note-creation-btn"));
@@ -149,8 +147,8 @@ class NoteTests {
     @Test
     @Order(1)
     public void crudNoteTest() {
-        doMockSignUp("URL","Test","UTNOTE","123");
-        doLogIn("UTNOTE", "123");
+        doMockSignUp("Kyrios","Anderson","kyriosanderson","Kyrios123!@#");
+        doLogIn("kyriosanderson", "Kyrios123!@#");
         createNote("Note Title", "Note Description");
         Assertions.assertTrue(driver.getPageSource().contains("Note Description"));
         WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
@@ -182,9 +180,11 @@ class NoteTests {
         webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-delete-1")));
         webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-delete-1")));
         WebElement deleteButton = driver.findElement(By.id("note-delete-1"));
+
         deleteButton.click();
         Assertions.assertEquals("http://localhost:" + this.port + "/result?isSuccess=true#nav-notes", driver.getCurrentUrl());
         webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("success")));
+
         WebElement deleteBtn = driver.findElement(By.id("success"));
         deleteBtn.click();
         Assertions.assertFalse(driver.getPageSource().contains("Note description updated"));

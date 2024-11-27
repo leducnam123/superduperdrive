@@ -2,6 +2,7 @@ package com.udacity.jwdnd.course1.cloudstorage.controller;
 
 import com.udacity.jwdnd.course1.cloudstorage.model.File;
 import com.udacity.jwdnd.course1.cloudstorage.services.FileService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -16,44 +17,28 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 @Controller
 @RequestMapping("/files")
+@RequiredArgsConstructor
 public class FileController {
 
     private final FileService fileService;
 
-    public FileController(FileService fileService) {
-        this.fileService = fileService;
-    }
-
-    /**
-     * Handles file upload requests.
-     *
-     * @param fileUpload     the file to upload
-     * @param authentication the authentication object containing user details
-     * @return the redirection URL indicating the success or failure of the upload
-     */
     @PostMapping("/upload")
-    public String uploadFile(
-            @RequestParam("fileUpload") MultipartFile fileUpload,
-            Authentication authentication
-    ) {
+    public String uploadFile(@RequestParam("fileUpload") MultipartFile fileUpload, Authentication authentication) {
         String username = (String) authentication.getPrincipal();
-
         if (fileUpload.isEmpty()) {
             return "redirect:/result?isSuccess=" + false + "&errorType=" + 1;
         }
 
         String fileName = fileUpload.getOriginalFilename();
-
-        if (!this.fileService.isFileNameAvailableForUser(username, fileName)) {
+        if (!fileService.isFileNameAvailableForUser(username, fileName)) {
             return "redirect:/result?isSuccess=" + false + "&errorType=" + 2;
         }
 
         try {
-            this.fileService.saveFile(fileUpload, username);
+            fileService.saveFile(fileUpload, username);
         } catch (IOException e) {
             e.printStackTrace();
             return "redirect:/result?isSuccess=" + false;
@@ -62,28 +47,15 @@ public class FileController {
         return "redirect:/result?isSuccess=" + true;
     }
 
-    /**
-     * Handles file deletion requests.
-     *
-     * @param fileId the ID of the file to delete
-     * @return the redirection URL indicating the success or failure of the deletion
-     */
     @GetMapping("/delete")
     public String deleteFile(@RequestParam(required = false, name = "fileId") Long fileId) {
-        Boolean isSuccess = this.fileService.deleteFile(fileId);
+        Boolean isSuccess = fileService.deleteFile(fileId);
         return "redirect:/result?isSuccess=" + isSuccess;
     }
 
-    /**
-     * Handles file download requests.
-     *
-     * @param fileId the ID of the file to download
-     * @return the ResponseEntity containing the file data
-     */
     @GetMapping("/download")
     public ResponseEntity<InputStreamResource> downloadFile(@RequestParam(required = false, name = "fileId") Long fileId) {
-        File file = this.fileService.getFileByFileId(fileId);
-
+        File file = fileService.getFileByFileId(fileId);
         InputStreamResource resource = new InputStreamResource(new ByteArrayInputStream(file.getFileData()));
 
         return ResponseEntity.ok()

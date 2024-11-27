@@ -13,7 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class SignupAndLoginFlowTests {
+class SignupAndLoginTests {
 
     @LocalServerPort
     private int port;
@@ -57,22 +57,22 @@ class SignupAndLoginFlowTests {
         webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("inputFirstName")));
         WebElement inputFirstName = driver.findElement(By.id("inputFirstName"));
         inputFirstName.click();
-        inputFirstName.sendKeys("John");
+        inputFirstName.sendKeys("Kyrios");
 
         webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("inputLastName")));
         WebElement inputLastName = driver.findElement(By.id("inputLastName"));
         inputLastName.click();
-        inputLastName.sendKeys("Kim");
+        inputLastName.sendKeys("Anderson");
 
         webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("inputUsername")));
         WebElement inputUsername = driver.findElement(By.id("inputUsername"));
         inputUsername.click();
-        inputUsername.sendKeys("TestNV13");
+        inputUsername.sendKeys("kyriosanderson");
 
         webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("inputPassword")));
         WebElement inputPassword = driver.findElement(By.id("inputPassword"));
         inputPassword.click();
-        inputPassword.sendKeys("TestPassword");
+        inputPassword.sendKeys("Kyrios123!@#");
 
         // Submit the signup form
         webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("buttonSignUp")));
@@ -84,12 +84,12 @@ class SignupAndLoginFlowTests {
         webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("inputUsername")));
         WebElement loginUserName = driver.findElement(By.id("inputUsername"));
         loginUserName.click();
-        loginUserName.sendKeys("TestNV13");
+        loginUserName.sendKeys("kyriosanderson");
 
         webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("inputPassword")));
         WebElement loginPassword = driver.findElement(By.id("inputPassword"));
         loginPassword.click();
-        loginPassword.sendKeys("TestPassword");
+        loginPassword.sendKeys("Kyrios123!@#");
 
         // Submit the login form
         webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("login-button")));

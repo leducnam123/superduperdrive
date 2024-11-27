@@ -7,6 +7,7 @@ import com.udacity.jwdnd.course1.cloudstorage.services.AuthorizationService;
 import com.udacity.jwdnd.course1.cloudstorage.services.CredentialService;
 import com.udacity.jwdnd.course1.cloudstorage.services.FileService;
 import com.udacity.jwdnd.course1.cloudstorage.services.NoteService;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -19,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Controller
+@RequiredArgsConstructor
 public class HomeController {
 
     private final Logger logger = LoggerFactory.getLogger(HomeController.class);
@@ -28,72 +30,53 @@ public class HomeController {
     private final CredentialService credentialService;
     private final FileService fileService;
 
-
-    public HomeController(
-            AuthorizationService authorizationService,
-            NoteService noteService,
-            CredentialService credentialService,
-            FileService fileService
-    ) {
-        this.authorizationService = authorizationService;
-        this.noteService = noteService;
-        this.credentialService = credentialService;
-        this.fileService = fileService;
-    }
-
     @GetMapping("/home")
-    public String getHomepage(
-            @ModelAttribute("userNote") UserNote userNote,
-            @ModelAttribute("userCredential") UserCredential userCredential,
-            Authentication authentication,
-            Model model
-    ) {
+    public String getHomepage(@ModelAttribute("userNote") UserNote userNote,
+                              @ModelAttribute("userCredential") UserCredential userCredential,
+                              Authentication authentication, Model model) {
         String username = (String) authentication.getPrincipal();
         Map<String, Object> data = new HashMap<>();
         data.put("noteList", this.noteService.getNotesByUsername(username));
-        if (this.noteService.getNotesByUsername(username) == null) {
+
+        if (null == noteService.getNotesByUsername(username)) {
             return "redirect:/login";
         }
-        data.put("credentialList", this.credentialService.getCredentialsByUsername(username));
-        data.put("fileList", this.fileService.getFilesByUser(username));
+        data.put("credentialList", credentialService.getCredentialsByUsername(username));
+        data.put("fileList", fileService.getFilesByUser(username));
+
         model.addAllAttributes(data);
         return "home";
     }
 
     @GetMapping("/logout")
-    public String logOut(
-            @ModelAttribute("userVo") UserVO userVo,
-            Model model
-    ) {
-        this.logger.info("logout");
+    public String logOut(@ModelAttribute("userVo") UserVO userVo, Model model) {
+        logger.info("logout");
         return this.loginPage(userVo, false, true, model);
     }
 
     @GetMapping("/login")
-    public String loginPage(
-            @ModelAttribute("userVo") UserVO userVo,
-            @RequestParam(required = false, name = "error") Boolean errorValue,
-            @RequestParam(required = false, name = "loggedOut") Boolean loggedOut,
-            Model model
-    ) {
+    public String loginPage(@ModelAttribute("userVo") UserVO userVo,
+                            @RequestParam(required = false, name = "error") Boolean errorValue,
+                            @RequestParam(required = false, name = "loggedOut") Boolean loggedOut,
+                            Model model) {
         Boolean hasError = errorValue != null && errorValue;
         Boolean isLoggedOut = loggedOut != null && loggedOut;
         Boolean signupSuccessfully = (Boolean) model.getAttribute("signupSuccessfully");
+
         Map<String, Object> data = new HashMap<>();
         data.put("toLogin", true);
         data.put("loginSuccessfully", false);
+
         data.put("hasError", hasError);
         data.put("isLoggedOut", isLoggedOut);
         data.put("signupSuccessfully", signupSuccessfully != null && signupSuccessfully);
+
         model.addAllAttributes(data);
         return "login";
     }
 
     @GetMapping("/signup")
-    public String signupForm(
-            @ModelAttribute("userVo") UserVO userVo,
-            Model model
-    ) {
+    public String signupForm(@ModelAttribute("userVo") UserVO userVo, Model model) {
         Map<String, Object> data = new HashMap<>();
         data.put("toSignUp", true);
         data.put("signupSuccessfully", false);
@@ -103,14 +86,13 @@ public class HomeController {
     }
 
     @PostMapping("/signup")
-    public String signupSubmit(
-            @ModelAttribute("userVo") UserVO userVo,
-            RedirectAttributes redirectAttributes,
-            Model model
-    ) {
-        this.logger.info("Received user info from Signup Form: {}", userVo.toString());
+    public String signupSubmit(@ModelAttribute("userVo") UserVO userVo,
+                               RedirectAttributes redirectAttributes,
+                               Model model) {
+        logger.info("Received user info from Signup Form: {}", userVo.toString());
         Map<String, Object> data = new HashMap<>();
-        if (!this.authorizationService.signupUser(userVo)) {
+
+        if (!authorizationService.signupUser(userVo)) {
             data.put("toSignUp", true);
             data.put("signupSuccessfully", false);
             data.put("hasError", true);
@@ -119,18 +101,16 @@ public class HomeController {
             data.put("signupSuccessfully", true);
             data.put("hasError", false);
         }
+
         redirectAttributes.addFlashAttribute("signupSuccessfully", data.get("signupSuccessfully"));
         model.mergeAttributes(data);
         return "redirect:/login";
     }
 
     @GetMapping("/result")
-    public String showResult(
-            Authentication authentication,
-            @RequestParam(required = false, name = "isSuccess") Boolean isSuccess,
-            @RequestParam(required = false, name = "errorType") Integer errorType,
-            Model model
-    ) {
+    public String showResult(@RequestParam(required = false, name = "isSuccess") Boolean isSuccess,
+                             @RequestParam(required = false, name = "errorType") Integer errorType,
+                             Model model) {
         Map<String, Object> data = new HashMap<>();
         data.put("isSuccess", isSuccess);
         data.put("errorType", errorType);

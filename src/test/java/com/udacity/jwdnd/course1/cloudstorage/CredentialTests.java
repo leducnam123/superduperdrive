@@ -45,7 +45,7 @@ class CredentialTests {
      * PLEASE DO NOT DELETE THIS method.
      * Helper method for Udacity-supplied sanity checks.
      **/
-    private void doMockSignUp(String firstName, String lastName, String userName, String password){
+    private void doMockSignUp(String firstName, String lastName, String username, String password){
         // Create a dummy account for logging in later.
 
         // Visit the sign-up page.
@@ -67,7 +67,7 @@ class CredentialTests {
         webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("inputUsername")));
         WebElement inputUsername = driver.findElement(By.id("inputUsername"));
         inputUsername.click();
-        inputUsername.sendKeys(userName);
+        inputUsername.sendKeys(username);
 
         webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("inputPassword")));
         WebElement inputPassword = driver.findElement(By.id("inputPassword"));
@@ -92,7 +92,7 @@ class CredentialTests {
      * PLEASE DO NOT DELETE THIS method.
      * Helper method for Udacity-supplied sanity checks.
      **/
-    private void doLogIn(String userName, String password)
+    private void doLogIn(String username, String password)
     {
         // Log in to our dummy account.
         driver.get("http://localhost:" + this.port + "/login");
@@ -101,7 +101,7 @@ class CredentialTests {
         webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("inputUsername")));
         WebElement loginUserName = driver.findElement(By.id("inputUsername"));
         loginUserName.click();
-        loginUserName.sendKeys(userName);
+        loginUserName.sendKeys(username);
 
         webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("inputPassword")));
         WebElement loginPassword = driver.findElement(By.id("inputPassword"));
@@ -115,7 +115,7 @@ class CredentialTests {
         webDriverWait.until(ExpectedConditions.titleContains("Home"));
     }
 
-    private void createCredential(String Url, String username, String password) {
+    private void createCredential(String url, String username, String password) {
         WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
         webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nav-credentials-tab")));
         WebElement tabnote = driver.findElement(By.id("nav-credentials-tab"));
@@ -128,7 +128,7 @@ class CredentialTests {
         webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-url")));
         WebElement credentialUrl = driver.findElement(By.id("credential-url"));
         credentialUrl.click();
-        credentialUrl.sendKeys(Url);
+        credentialUrl.sendKeys(url);
 
         webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-username")));
         WebElement credentialUsername = driver.findElement(By.id("credential-username"));
@@ -154,8 +154,8 @@ class CredentialTests {
     @Test
     @Order(1)
     public void crudCredential() {
-        doMockSignUp("URL","Test","UTCREDENTIAL","123");
-        doLogIn("UTCREDENTIAL", "123");
+        doMockSignUp("Kyrios","Anderson","kyriosanderson","Kyrios123!@#");
+        doLogIn("kyriosanderson", "Kyrios123!@#");
         createCredential("/test", "UT", "UT");
         Assertions.assertTrue(driver.getPageSource().contains("test"));
 
@@ -167,7 +167,7 @@ class CredentialTests {
         webDriverWaits.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-url")));
         WebElement credentialUrl = driver.findElement(By.id("credential-url"));
         credentialUrl.click();
-        credentialUrl.sendKeys("/testupdate");
+        credentialUrl.sendKeys("/test-update");
 
         webDriverWaits.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-username")));
         WebElement credentialUsername = driver.findElement(By.id("credential-username"));
@@ -187,7 +187,7 @@ class CredentialTests {
         webDriverWaits.until(ExpectedConditions.visibilityOfElementLocated(By.id("success")));
         WebElement success = driver.findElement(By.id("success"));
         success.click();
-        Assertions.assertTrue(driver.getPageSource().contains("testupdate"));
+        Assertions.assertTrue(driver.getPageSource().contains("test-update"));
 
         webDriverWaits.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-delete-1")));
         WebElement deleteButton = driver.findElement(By.id("credential-delete-1"));
@@ -196,6 +196,6 @@ class CredentialTests {
         webDriverWaits.until(ExpectedConditions.visibilityOfElementLocated(By.id("success")));
         WebElement deleteBtn = driver.findElement(By.id("success"));
         deleteBtn.click();
-        Assertions.assertFalse(driver.getPageSource().contains("testupdate"));
+        Assertions.assertFalse(driver.getPageSource().contains("test-update"));
     }
 }

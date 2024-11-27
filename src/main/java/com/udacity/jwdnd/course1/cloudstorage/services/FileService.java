@@ -6,6 +6,7 @@ import com.udacity.jwdnd.course1.cloudstorage.mapper.UserMapper;
 import com.udacity.jwdnd.course1.cloudstorage.model.File;
 import com.udacity.jwdnd.course1.cloudstorage.model.User;
 import com.udacity.jwdnd.course1.cloudstorage.model.UserFile;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -17,74 +18,43 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class FileService {
-
-    private final Logger logger = LoggerFactory.getLogger(FileService.class);
 
     private final FileMapper fileMapper;
     private final UserFileMapper userFileMapper;
     private final UserMapper userMapper;
 
-    public FileService(FileMapper fileMapper, UserFileMapper userFileMapper, UserMapper userMapper) {
-        this.fileMapper = fileMapper;
-        this.userFileMapper = userFileMapper;
-        this.userMapper = userMapper;
-    }
-
     public Boolean isFileNameAvailableForUser(String username, String filename) {
-        Map<String, Object> paraMap = new HashMap<>();
+        Map<String, Object> paramMap = new HashMap<>();
         Long userId = userMapper.getUserIdByUsername(username);
-        paraMap.put("userid", userId);
-        paraMap.put("filename", filename);
-        return this.userFileMapper.getFileByUsernameAndFileName(filename, userId).isEmpty();
+        paramMap.put("userId", userId);
+        paramMap.put("filename", filename);
+        return userFileMapper.getFileByUsernameAndFileName(filename, userId).isEmpty();
     }
 
-    /**
-     * Retrieves the list of files for a specific user.
-     *
-     * @param username the username of the user
-     * @return the list of UserFile objects
-     */
     public List<UserFile> getFilesByUser(String username) {
         Long userId = userMapper.getUserIdByUsername(username);
-        return this.userFileMapper.getFileByUserId(userId);
+        return userFileMapper.getFileByUserId(userId);
     }
 
-    /**
-     * Saves a file for a specific user.
-     *
-     * @param file     the MultipartFile to save
-     * @param username the username of the user
-     * @return true if the file is saved successfully, false otherwise
-     * @throws IOException if an I/O error occurs
-     */
     public Boolean saveFile(MultipartFile file, String username) throws IOException {
-        User user = this.userMapper.getUserByUsername(username);
+        User user = userMapper.getUserByUsername(username);
         byte[] fileData = file.getBytes();
         String contentType = file.getContentType();
+
         String fileSize = String.valueOf(file.getSize());
         String fileName = file.getOriginalFilename();
-        this.fileMapper.insert(new File(null, fileName, contentType, fileSize, user.getUserId(), fileData));
+        fileMapper.insert(new File(null, fileName, contentType, fileSize, user.getUserId(), fileData));
+
         return true;
     }
 
-    /**
-     * Deletes a file by its file ID.
-     *
-     * @param fileId the ID of the file to delete
-     * @return true if the file is deleted successfully, false otherwise
-     */
     public Boolean deleteFile(Long fileId) {
-        this.fileMapper.delete(fileId);
+        fileMapper.delete(fileId);
         return true;
     }
 
-    /**
-     * Retrieves a file by its file ID.
-     *
-     * @param fileId the ID of the file to retrieve
-     * @return the File object
-     */
     public File getFileByFileId(Long fileId) {
         return this.fileMapper.getFileById(fileId);
     }

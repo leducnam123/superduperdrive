@@ -4,6 +4,7 @@ import com.udacity.jwdnd.course1.cloudstorage.mapper.CredentialMapper;
 import com.udacity.jwdnd.course1.cloudstorage.mapper.UserCredentialMapper;
 import com.udacity.jwdnd.course1.cloudstorage.mapper.UserMapper;
 import com.udacity.jwdnd.course1.cloudstorage.model.UserCredential;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -14,25 +15,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class CredentialService {
-    private final Logger logger = LoggerFactory.getLogger(CredentialService.class);
 
     private final EncryptionService encryptionService;
     private final CredentialMapper credentialMapper;
     private final UserCredentialMapper userCredentialMapper;
     private final UserMapper userMapper;
-
-    public CredentialService(
-            EncryptionService encryptionService,
-            CredentialMapper credentialMapper,
-            UserCredentialMapper userCredentialMapper,
-            UserMapper userMapper
-    ) {
-        this.encryptionService = encryptionService;
-        this.credentialMapper = credentialMapper;
-        this.userCredentialMapper = userCredentialMapper;
-        this.userMapper = userMapper;
-    }
 
     public List<UserCredential> getCredentialsByUsername(String username) {
         Long userId = userMapper.getUserIdByUsername(username);
@@ -45,7 +34,7 @@ public class CredentialService {
         String encryptedPassword = encryptPassword(userCredential);
         userCredential.setPassword(encryptedPassword);
 
-        if (credentialId == null) {
+        if (null == credentialId) {
             userCredentialMapper.insertCredentialByUsername(
                     userCredential.getUrl(),
                     userCredential.getUsername(),
